@@ -1,32 +1,87 @@
-import React from "react";
-import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import React, {useState, useEffect} from "react";
+import {api} from "../utils/Api";
+import Card from "./Card";
 
 function Main (props) {
-  const currentUser = React.useContext(CurrentUserContext);
+    const [userName, setUserName] = useState ("");
+    const [userDescription, setUserDescription] = useState ("");
+    const [userAvatar, setUserAvatar] = useState ("");
+    const [cards, setCards] = useState ("");
 
-  return (
-    <main className="content">
-      <section className="profile">
-        <div onClick={props.onEditProfile} className="profile__overlay-container">
-          <div className="profile__overlay"></div>
-          <img src={currentUser.avatar} alt="profile-picture" className="profile__picture" />
-        </div>
-        <div className="profile__info">
-        <div className="profile__wrapper">
-          <h1 className="profile__title">{currentUser}</h1>
-          <button onClick={props.onEditAvatar} className="profile__edit hover-button" aria-label= "Edit"></button>
-        </div>
-        <p className="profile__subtitle">{currentUser.about}</p>
-        </div>
-        <button onClick={props.onAddPlace} className="profile__add-button hover-button" aria-label="Add"></button>
-      </section>
-      <section className="elements">
-        <ul className="elements__container">
-          {props.children}
-        </ul>
-      </section>
-    </main>
-  )
+    useEffect (() => {
+        api
+            .getUserInfo ()
+            .then((res) => {
+                setUserName (res.name);
+                setUserDescription (res.about);
+                setUserAvatar (res.avatar);
+            })
+            .catch((err) => console.log(err));
+    },[]);
+
+    useEffect (() => {
+        api
+            .getInitialCards ()
+            .then((res) => {
+                setCards (res);
+                
+                
+            })
+            .catch((err) => console.log(err));
+    },[]);
+
+    return (
+        <main className="content">
+            <section className="profile">
+                <div
+                className="profile__image-overlay"
+                onClick = {props.onEditAvatarClick}
+                >
+                    <img
+                        className="profile__image"
+                        src={userAvatar}
+                        alt="User's Profile Pic"
+                    />
+                </div>
+                <div className="profile__info">
+                    <div className="profile__person">
+                        <h1 className="profile__name">{userName}</h1>
+                        <button 
+                        className="profile__edit-button"
+                        type="button"
+                        aria-label="open-edit-profile-modal"
+                        onClick={props.onEditProfileClick}
+                        >                     
+
+                        </button>
+                    </div>
+                    <p className="profile__description">{userDescription}</p>
+                </div>
+                <button
+                    className="profile__add-button"
+                    type="button"
+                    aria-label="open-new-card-modal"
+                    onClick={props.onAddPlaceClick}
+                ></button>
+            </section>
+
+
+            <section className="postcards">
+                <ul className="postcards__list">
+                    {cards.localeCompare((card)=>{
+                        return(
+                            <Card
+                                card={card}
+                                key={card._id}
+                                onCardClick={props.onCardClick}
+                                onRemoveCardClick={props.onRemoveCardClick}
+                            />
+                        );
+                    })}
+                </ul>
+            </section>
+        </main>
+    );
 }
 
 export default Main;
