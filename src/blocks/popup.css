@@ -31,13 +31,13 @@
   }
   
   .popup__close-button {
-    background-image: url("../src/images/close-icon.svg");
+    background-image: url("../images/close-icon.svg");
     background-color: transparent;
     background-repeat: no-repeat;
     background-position: center;
     background-size: 33px 33px;
     border: none;
-    cursor: url("../src/images/pointer.png"), pointer;
+    cursor: url("../images/pointer.png"), pointer;
     width: 40px;
     height: 40px;
     align-self: flex-end;

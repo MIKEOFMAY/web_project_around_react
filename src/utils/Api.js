@@ -23,7 +23,7 @@ class Api {
     }
 
     getUserInfo() {
-        return fetch (`${this._baseUrl}/user/me`,{
+        return fetch (`$ {this._baseUrl}/users/me`,{
             method: "GET",
             headers:this._headers,
 
@@ -31,7 +31,7 @@ class Api {
     }
 
     setUserInfo(name, about) {
-        return fetch (`${this._baseUrl}/user/me`,{
+        return fetch (`${this._baseUrl}/users/me`,{
             method: "PATCH",
             headers:this._headers,
             body: JSON.stringify({

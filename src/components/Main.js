@@ -6,7 +6,7 @@ function Main (props) {
     const [userName, setUserName] = useState ("");
     const [userDescription, setUserDescription] = useState ("");
     const [userAvatar, setUserAvatar] = useState ("");
-    const [cards, setCards] = useState ("");
+    const [cards, setCards] = useState ([]);
 
     useEffect (() => {
         api
@@ -21,7 +21,7 @@ function Main (props) {
 
     useEffect (() => {
         api
-            .getInitialCards ()
+            .getInitialcards ()
             .then((res) => {
                 setCards (res);
                 
@@ -68,7 +68,7 @@ function Main (props) {
 
             <section className="postcards">
                 <ul className="postcards__list">
-                    {cards.localeCompare((card)=>{
+                    {cards.map((card)=>{
                         return(
                             <Card
                                 card={card}
