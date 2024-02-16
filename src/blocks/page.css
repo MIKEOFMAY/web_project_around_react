@@ -13,3 +13,7 @@
     box-sizing: border-box;
     align-self: center;
 }
+
+#root {
+  background-color: black;
+}
