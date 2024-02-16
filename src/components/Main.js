@@ -6,8 +6,8 @@ function Main (props) {
     const [userName, setUserName] = useState ("");
     const [userDescription, setUserDescription] = useState ("");
     const [userAvatar, setUserAvatar] = useState ("");
-    const [cards, setCards] = useState ([]);
-
+    const [cards, setCards] = useState ([]);     
+   
     useEffect (() => {
         api
             .getUserInfo ()
@@ -17,8 +17,8 @@ function Main (props) {
                 setUserAvatar (res.avatar);
             })
             .catch((err) => console.log(err));
-    },[]);
-
+    },[props.refetchCard]);
+             
     useEffect (() => {
         api
             .getInitialcards ()
@@ -27,8 +27,8 @@ function Main (props) {
                 
                 
             })
-            .catch((err) => console.log(err));
-    },[]);
+            .catch((err) => console.log(err)); 
+    },[props.refetchCard]); 
 
     return (
         <main className="content">
@@ -43,7 +43,7 @@ function Main (props) {
                         alt="User's Profile Pic"
                     />
                 </div>
-                <div className="profile__info">
+                <div className="profile__info"> 
                     <div className="profile__person">
                         <h1 className="profile__name">{userName}</h1>
                         <button 
@@ -74,7 +74,7 @@ function Main (props) {
                                 card={card}
                                 key={card._id}
                                 onCardClick={props.onCardClick}
-                                onRemoveCardClick={props.onRemoveCardClick}
+                                onRemoveCardClick={props.onRemoveCardClick} 
                             />
                         );
                     })}

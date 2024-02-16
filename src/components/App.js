@@ -4,6 +4,8 @@ import Main from "./Main";
 import Footer from "./Footer";
 import PopupWithForm from "./PopupWithForm";
 import ImagePopup from "./ImagePopup";
+import { api } from "../utils/Api";
+
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
@@ -11,10 +13,12 @@ function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isImageExhibitOpen, setIsImageExhibitOpen] = useState(false);
   const [isRemoveCardOpen, setIsRemoveCardOpen] = useState(false);
-  const [selectedCard, setSelectedCard] = useState({
+  const [willDeleteCardId, setWillDeleteCard] = useState (''); 
+  const [refetchCard, setRefetchCard] = useState (false);  
+  const [selectedCard, setSelectedCard] = useState({ 
     name: "",
     link: "",
-  });
+  }); 
 
   const handleEditProfileClick = () => {
     setIsEditProfilePopupOpen(true);
@@ -28,7 +32,7 @@ function App() {
     setIsEditAvatarPopupOpen(true);
   };
 
-  const handleCardClick = (props) => {
+  const handleCardClick = (props) => {                                                    
     setIsImageExhibitOpen(true);
     setSelectedCard({
       name: props.name,
@@ -37,10 +41,21 @@ function App() {
   };
 
   const handleRemoveCardClick = (card) => {
-    setIsRemoveCardOpen(true);
+    setWillDeleteCard(card._id);  
+    setIsRemoveCardOpen(true); 
     return card;
   };
 
+  const confirmCardRemoval = async (e) => {
+    e.preventDefault();
+    await api.removeCard(willDeleteCardId).then(() => {
+      setIsRemoveCardOpen(false);
+      setRefetchCard(!refetchCard); //change the remove card .
+    }).catch((err) => {  
+      setIsRemoveCardOpen(false); 
+    }); 
+  } 
+   
   const closeAllPopups = () => {
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
@@ -48,6 +63,55 @@ function App() {
     setIsImageExhibitOpen(false);
     setIsRemoveCardOpen(false);
   };
+
+
+  const addNewPlace = async (e) => {
+    e.preventDefault();
+          const name = e.target.querySelector("#input-title").value;
+          const link = e.target.querySelector("#input-url").value;
+          api.addCard({ name, link }).then(() => {
+            setRefetchCard (!refetchCard); 
+            closeAllPopups();
+          }).catch((err) => {
+            closeAllPopups();
+          });
+    
+
+     
+                                   
+
+
+    
+  }
+
+  const editNewProfile = async (e) => {
+    e.preventDefault(); 
+          const name = e.target.querySelector("#input-name").value;       
+          const about = e.target.querySelector("#input-about").value;  
+          api.setUserInfo( name, about ).then(() => {
+            setRefetchCard (!refetchCard); 
+            closeAllPopups(); 
+          }).catch((err) => {
+            closeAllPopups(); 
+          });
+
+  }
+
+  const editAvatar = async (e) => {
+    e.preventDefault(); 
+          const link = e.target.querySelector("#input-avatar").value;       
+          
+          await api.setUserAvatar( link )
+          setRefetchCard (!refetchCard);  
+            console.log ("sana");
+            closeAllPopups(); 
+
+          
+console.log ("sini");        
+  }
+
+
+
 
   return (
     <>
@@ -58,21 +122,23 @@ function App() {
         onEditAvatarClick={handleEditAvatarClick}
         onCardClick={handleCardClick}
         onRemoveCardClick={handleRemoveCardClick}
-      />
+        refetchCard = {refetchCard}
+      />      
       <Footer />
 
       <PopupWithForm
         title="Edit Profile"
         name="edit-profile"
+        onSubmit={editNewProfile}
         isOpen={isEditProfilePopupOpen}
-        onClose={closeAllPopups}
+        onClose={closeAllPopups} 
         buttonText="Save"
       >
         <fieldset className="form__fieldset">
           <input
             className="form__input form__input_type_profile-name"
             type="text"
-            name="username"
+            name="username" 
             id="input-name"
             placeholder="Name"
             minLength="2"
@@ -102,7 +168,8 @@ function App() {
         name="add-place"
         isOpen={isAddPlacePopupOpen}
         onClose={closeAllPopups}
-        buttonText="Create"
+        buttonText="Create" 
+        onSubmit={addNewPlace}
       >
         <fieldset className="form__fieldset">
           <input
@@ -119,7 +186,7 @@ function App() {
           <span className="form__input-error input-title-error"></span>
 
           <input
-            className="form__input form__input_type_postcard-url"
+            className="form__input form__input_type_postcard-url "
             type="url"
             name="link"
             id="input-url"
@@ -136,7 +203,8 @@ function App() {
         name="avatar"
         isOpen={isEditAvatarPopupOpen}
         onClose={closeAllPopups}
-        buttonText="Save"
+        buttonText="Save" 
+        onSubmit = {editAvatar} 
       >
         <fieldset className="form__fieldset">
           <input
@@ -156,9 +224,10 @@ function App() {
         name="remove-card"
         buttonText="Yes"
         isOpen={isRemoveCardOpen}
-        onClose={closeAllPopups}
+        onClose={closeAllPopups} 
+        onSubmit={confirmCardRemoval} 
       />
-
+ 
       <ImagePopup
         card={selectedCard}
         isOpen={isImageExhibitOpen}

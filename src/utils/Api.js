@@ -23,7 +23,7 @@ class Api {
     }
 
     getUserInfo() {
-        return fetch (`$ {this._baseUrl}/users/me`,{
+        return fetch (`${this._baseUrl}/users/me`,{
             method: "GET",
             headers:this._headers,
 
@@ -45,7 +45,7 @@ class Api {
         return fetch (`${this._baseUrl}/users/me/avatar`, {
             method : "PATCH",
             headers: this._headers,
-            body:JSON.stringify({
+            body:JSON.stringify({ 
                 avatar:link,
             }),
         
@@ -56,13 +56,13 @@ class Api {
     addCard (data) {
         return fetch (`${this._baseUrl}/cards`, {
             method: "POST",
-            headers: "this._headers",
+            headers: this._headers,
             body: JSON.stringify(data),
 
         }).then(this._processResponse);
     }
 
-    removeCard (cardId) {
+    removeCard (cardId) {  
         return fetch (`${this._baseUrl}/cards/${cardId}`, {
             method:"DELETE",
             headers:this._headers,

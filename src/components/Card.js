@@ -2,7 +2,7 @@ import React from "react";
 
 function Card (props) {
   function handleClick (){
-   props.onCardClick (props.card);
+   props.onCardClick (props.card);     
   }
 
   function handleRemoveClick (){
@@ -37,7 +37,7 @@ function Card (props) {
       </div>
     </li>
   );
-  
+   
 }
 
 export default Card;
