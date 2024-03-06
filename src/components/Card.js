@@ -1,12 +1,28 @@
 import React from "react";
 
+
+import { CurrentUserContext } from "../context/CurrentUserContext";
+
+
+
 function Card (props) {
+  const currentUser = React.useContext (CurrentUserContext)
+  const isLiked = props.card.likes.some((i) => i._id === currentUser._id);  
+  const {likesCounter}=props  
+  console.log (props.card);
+  console.log ("islike,  ", isLiked,currentUser._id);
+  
+  function handleLikeClick (){
+    props.onCardClickLike (props.card);     
+   } 
+  
   function handleClick (){
    props.onCardClick (props.card);     
   }
 
   function handleRemoveClick (){
-    props.onRemoveCardClick (props.card);
+    props.onRemoveCardClick (props.card); 
+
    }
   return (
     <li className="postcard">
@@ -26,13 +42,14 @@ function Card (props) {
         <h2 className="postcard__title">{props.card.name}</h2>
         <div className="postcard__like-container">
           <button
-            className="postcard__like-button"
-            aria-label="like-or-unlike-postcard"
+            className={`postcard__like-button ${
+              isLiked && "postcard__like-button_active" 
+            }`} 
+            aria-label="like-or-unlike-postcard" 
             type="button"
-          ></button>
-          <span className="postcard__like-counter">
-            {props.card.likes.length}
-          </span>
+            onClick={handleLikeClick}
+          />
+          <span className="postcard__like-counter">{likesCounter}</span>
         </div>
       </div>
     </li>

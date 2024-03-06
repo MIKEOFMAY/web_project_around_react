@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
@@ -6,19 +6,49 @@ import PopupWithForm from "./PopupWithForm";
 import ImagePopup from "./ImagePopup";
 import { api } from "../utils/Api";
 
+import EditProfilePopup from "./EditProfilePopup";
+import EditAvatarPopup from "./EditAvatarPopup";
+
+import { CurrentUserContext } from "../context/CurrentUserContext";
 
 function App() {
+
+  const [isAvatarLoading, setIsAvatarLoading] = useState(false);
+
+
+  
+
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isImageExhibitOpen, setIsImageExhibitOpen] = useState(false);
   const [isRemoveCardOpen, setIsRemoveCardOpen] = useState(false);
-  const [willDeleteCardId, setWillDeleteCard] = useState (''); 
-  const [refetchCard, setRefetchCard] = useState (false);  
-  const [selectedCard, setSelectedCard] = useState({ 
+  const [willDeleteCardId, setWillDeleteCard] = useState("");
+  const [refetchCard, setRefetchCard] = useState(false);
+  const [selectedCard, setSelectedCard] = useState({
     name: "",
-    link: "",
-  }); 
+    link: ""
+  });
+
+  const onUpdateUser = async ({ name, about }) => {
+    try {
+      await api.setUserInfo(name, about);
+      // Update the local currentUser state
+      setCurrentUser({ ...currentUser, name, about });
+      closeAllPopups();
+    } catch (error) {
+      console.error("Error updating user info:", error);
+    }
+  };
+
+  const [currentUser, setCurrentUser] = useState({});
+
+  useEffect(() => {
+    api
+      .getUserInfo()
+      .then((userInfo) => setCurrentUser(userInfo))
+      .catch((error) => console.error("error fetching user info:", error));
+  }, []);
 
   const handleEditProfileClick = () => {
     setIsEditProfilePopupOpen(true);
@@ -32,30 +62,33 @@ function App() {
     setIsEditAvatarPopupOpen(true);
   };
 
-  const handleCardClick = (props) => {                                                    
+  const handleCardClick = (props) => {
     setIsImageExhibitOpen(true);
     setSelectedCard({
       name: props.name,
-      link: props.link,
+      link: props.link 
     });
   };
 
   const handleRemoveCardClick = (card) => {
-    setWillDeleteCard(card._id);  
-    setIsRemoveCardOpen(true); 
+    setWillDeleteCard(card._id);
+    setIsRemoveCardOpen(true);
     return card;
   };
 
   const confirmCardRemoval = async (e) => {
     e.preventDefault();
-    await api.removeCard(willDeleteCardId).then(() => {
-      setIsRemoveCardOpen(false);
-      setRefetchCard(!refetchCard); //change the remove card .
-    }).catch((err) => {  
-      setIsRemoveCardOpen(false); 
-    }); 
-  } 
-   
+    await api
+      .removeCard(willDeleteCardId)
+      .then(() => {
+        setIsRemoveCardOpen(false);
+        setRefetchCard(!refetchCard); //change the remove card .
+      })
+      .catch((err) => {
+        setIsRemoveCardOpen(false);
+      });
+  };
+
   const closeAllPopups = () => {
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
@@ -64,81 +97,97 @@ function App() {
     setIsRemoveCardOpen(false);
   };
 
-
   const addNewPlace = async (e) => {
     e.preventDefault();
-          const name = e.target.querySelector("#input-title").value;
-          const link = e.target.querySelector("#input-url").value;
-          api.addCard({ name, link }).then(() => {
-            setRefetchCard (!refetchCard); 
-            closeAllPopups();
-          }).catch((err) => {
-            closeAllPopups();
-          });
-    
-
-     
-                                   
-
-
-    
-  }
+    const name = e.target.querySelector("#input-title").value;
+    const link = e.target.querySelector("#input-url").value;
+    api
+      .addCard({ name, link })
+      .then(() => {
+        setRefetchCard(!refetchCard);
+        closeAllPopups();
+      })
+      .catch((err) => {
+        closeAllPopups();
+      });
+  };
 
   const editNewProfile = async (e) => {
-    e.preventDefault(); 
-          const name = e.target.querySelector("#input-name").value;       
-          const about = e.target.querySelector("#input-about").value;  
-          api.setUserInfo( name, about ).then(() => {
-            setRefetchCard (!refetchCard); 
-            closeAllPopups(); 
-          }).catch((err) => {
-            closeAllPopups(); 
-          });
-
-  }
+    e.preventDefault();
+    const name = e.target.querySelector("#input-name").value;
+    const about = e.target.querySelector("#input-about").value;
+    api
+      .setUserInfo(name, about)
+      .then(() => {
+        setRefetchCard(!refetchCard);
+        closeAllPopups();
+      })
+      .catch((err) => {
+        closeAllPopups();
+      });
+  };
 
   const editAvatar = async (e) => {
-    e.preventDefault(); 
-          const link = e.target.querySelector("#input-avatar").value;       
-          
-          await api.setUserAvatar( link )
-          setRefetchCard (!refetchCard);  
-            console.log ("sana");
-            closeAllPopups(); 
+    e.preventDefault();
+    const link = e.target.querySelector("#input-avatar").value;
 
-          
-console.log ("sini");        
-  }
+    await api.setUserAvatar(link);
+    setRefetchCard(!refetchCard);
+    
+    closeAllPopups();
+
+    
+  };
+
+  const onUpdateAvatar = async (avatarInfo) => {
+    try {
+      setIsAvatarLoading(true); // Set loading to true
+      await api.setUserAvatar(avatarInfo.avatar);
+      setCurrentUser({ ...currentUser, avatar: avatarInfo.avatar });
+      closeAllPopups();
+    } catch (error) {
+      console.error('Error updating avatar:', error);
+    } finally {
+      setIsAvatarLoading(false); // Set loading back to false
+    }
+  };
+
+
+  
+
+
 
 
 
 
   return (
-    <>
+    <CurrentUserContext.Provider value={currentUser}>
       <Header />
       <Main
         onEditProfileClick={handleEditProfileClick}
-        onAddPlaceClick={handleAddPlaceClick}
+        onAddPlaceClick={handleAddPlaceClick} 
         onEditAvatarClick={handleEditAvatarClick}
         onCardClick={handleCardClick}
         onRemoveCardClick={handleRemoveCardClick}
-        refetchCard = {refetchCard}
-      />      
+        refetchCard={refetchCard}
+      />
       <Footer />
+
+      <EditProfilePopup onUpdateUser={onUpdateUser} />  
 
       <PopupWithForm
         title="Edit Profile"
         name="edit-profile"
         onSubmit={editNewProfile}
         isOpen={isEditProfilePopupOpen}
-        onClose={closeAllPopups} 
+        onClose={closeAllPopups}
         buttonText="Save"
       >
         <fieldset className="form__fieldset">
           <input
             className="form__input form__input_type_profile-name"
             type="text"
-            name="username" 
+            name="username"
             id="input-name"
             placeholder="Name"
             minLength="2"
@@ -168,7 +217,7 @@ console.log ("sini");
         name="add-place"
         isOpen={isAddPlacePopupOpen}
         onClose={closeAllPopups}
-        buttonText="Create" 
+        buttonText="Create"
         onSubmit={addNewPlace}
       >
         <fieldset className="form__fieldset">
@@ -203,8 +252,8 @@ console.log ("sini");
         name="avatar"
         isOpen={isEditAvatarPopupOpen}
         onClose={closeAllPopups}
-        buttonText="Save" 
-        onSubmit = {editAvatar} 
+        buttonText="Save"
+        onSubmit={editAvatar}
       >
         <fieldset className="form__fieldset">
           <input
@@ -224,8 +273,8 @@ console.log ("sini");
         name="remove-card"
         buttonText="Yes"
         isOpen={isRemoveCardOpen}
-        onClose={closeAllPopups} 
-        onSubmit={confirmCardRemoval} 
+        onClose={closeAllPopups}
+        onSubmit={confirmCardRemoval}
       />
  
       <ImagePopup
@@ -233,7 +282,16 @@ console.log ("sini");
         isOpen={isImageExhibitOpen}
         onClose={closeAllPopups}
       />
-    </>
+
+      <EditAvatarPopup
+        isOpen={isEditAvatarPopupOpen}
+        onClose={closeAllPopups}
+        onUpdateAvatar={onUpdateAvatar}  
+        isRenderLoading={isAvatarLoading}
+      />
+
+
+    </CurrentUserContext.Provider>
   );
 }
 

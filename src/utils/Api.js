@@ -69,7 +69,7 @@ class Api {
             
 
         }).then(this._processResponse);    
-
+ 
     }
 
     cardLike (cardId, isItLiked) {

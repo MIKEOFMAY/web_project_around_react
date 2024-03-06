@@ -15,27 +15,8 @@ function EditAvatarPopup({ isOpen, onClose, onUpdateAvatar, isRenderLoading }) {
     evt.preventDefault();
     onUpdateAvatar({
       avatar: avatarRef.current.value,
-      
     });
-                  
-    api.setUserAvatar( name, about ).then(() => {
-        setRefetchCard (!refetchCard); 
-        closeAllPopups(); 
-        }).catch((err) => {   
-        closeAllPopups(); 
-        });
-         
-    
-         
-                                       
-    
-    
-        
-      }
-  
-
-
-  
+  }
 
   function handleTestValidity(evt) {
     setIsAvatarLinkValid(evt.target.validity.valid);
