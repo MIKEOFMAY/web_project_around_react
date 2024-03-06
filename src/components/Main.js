@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { api } from "../utils/Api";
+import { api } from "../utils/api";
 import Card from "./Card";
 
 import { CurrentUserContext } from "../context/CurrentUserContext";
@@ -7,19 +7,16 @@ import { CurrentUserContext } from "../context/CurrentUserContext";
 function Main(props) {
   const currentUser = useContext(CurrentUserContext);
 
-
   const [cards, setCards] = useState([]);
 
   useEffect(() => {
     api
       .getInitialcards()
-      .then((cardList) => setCards(cardList)) 
+      .then((cardList) => setCards(cardList))
       .catch((error) => console.error("Error fetching card list:", error));
   }, []);
 
-
-
-  useEffect(() => { 
+  useEffect(() => {
     api
       .getInitialcards()
       .then((res) => {
@@ -30,11 +27,10 @@ function Main(props) {
 
   function handleCardLike(card) {
     const isLiked = card.likes.some((i) => i._id === currentUser._id);
-    
-    
-    api 
+
+    api
       .cardLike(card._id, isLiked)
-      .then((newCard) =>   
+      .then((newCard) =>
         setCards((state) =>
           state.map((c) => (c._id === card._id ? newCard : c))
         )
@@ -49,12 +45,10 @@ function Main(props) {
       .removeCard(card._id)
       .then(() => setCards((state) => state.filter((c) => c._id !== card._id)))
       .catch((error) => console.error("Error deleting card:", error));
-  }  
+  }
 
-
-  function handleCardClick (card) {
-    
-    props.onCardClick (card)
+  function handleCardClick(card) {
+    props.onCardClick(card);
   }
 
   return (
@@ -92,18 +86,18 @@ function Main(props) {
         </section>
 
         <section className="postcards">
-          <ul className="postcards__list">  
+          <ul className="postcards__list">
             {cards.map((card) => (
-              <Card   
+              <Card
                 card={card}
                 key={card._id}
-                onCardClick={handleCardClick} 
-                onRemoveCardClick={handleCardDelete} 
-                onCardClickLike = {handleCardLike}     
+                onCardClick={handleCardClick}
+                onRemoveCardClick={handleCardDelete}
+                onCardClickLike={handleCardLike}
               />
             ))}
           </ul>
-        </section>  
+        </section>
       </main>
     </CurrentUserContext.Provider>
   );

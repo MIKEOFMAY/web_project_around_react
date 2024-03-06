@@ -4,7 +4,7 @@ import Main from "./Main";
 import Footer from "./Footer";
 import PopupWithForm from "./PopupWithForm";
 import ImagePopup from "./ImagePopup";
-import { api } from "../utils/Api";
+import { api } from "../utils/api";
 
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
@@ -12,11 +12,7 @@ import EditAvatarPopup from "./EditAvatarPopup";
 import { CurrentUserContext } from "../context/CurrentUserContext";
 
 function App() {
-
   const [isAvatarLoading, setIsAvatarLoading] = useState(false);
-
-
-  
 
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
@@ -66,7 +62,7 @@ function App() {
     setIsImageExhibitOpen(true);
     setSelectedCard({
       name: props.name,
-      link: props.link 
+      link: props.link
     });
   };
 
@@ -133,10 +129,8 @@ function App() {
 
     await api.setUserAvatar(link);
     setRefetchCard(!refetchCard);
-    
-    closeAllPopups();
 
-    
+    closeAllPopups();
   };
 
   const onUpdateAvatar = async (avatarInfo) => {
@@ -146,26 +140,18 @@ function App() {
       setCurrentUser({ ...currentUser, avatar: avatarInfo.avatar });
       closeAllPopups();
     } catch (error) {
-      console.error('Error updating avatar:', error);
+      console.error("Error updating avatar:", error);
     } finally {
       setIsAvatarLoading(false); // Set loading back to false
     }
   };
-
-
-  
-
-
-
-
-
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <Header />
       <Main
         onEditProfileClick={handleEditProfileClick}
-        onAddPlaceClick={handleAddPlaceClick} 
+        onAddPlaceClick={handleAddPlaceClick}
         onEditAvatarClick={handleEditAvatarClick}
         onCardClick={handleCardClick}
         onRemoveCardClick={handleRemoveCardClick}
@@ -173,7 +159,7 @@ function App() {
       />
       <Footer />
 
-      <EditProfilePopup onUpdateUser={onUpdateUser} />  
+      <EditProfilePopup onUpdateUser={onUpdateUser} />
 
       <PopupWithForm
         title="Edit Profile"
@@ -276,7 +262,7 @@ function App() {
         onClose={closeAllPopups}
         onSubmit={confirmCardRemoval}
       />
- 
+
       <ImagePopup
         card={selectedCard}
         isOpen={isImageExhibitOpen}
@@ -286,11 +272,9 @@ function App() {
       <EditAvatarPopup
         isOpen={isEditAvatarPopupOpen}
         onClose={closeAllPopups}
-        onUpdateAvatar={onUpdateAvatar}  
+        onUpdateAvatar={onUpdateAvatar}
         isRenderLoading={isAvatarLoading}
       />
-
-
     </CurrentUserContext.Provider>
   );
 }
