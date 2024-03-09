@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import api from "./api";
+import api from "../utils/api";
 import Card from "./Card";
 
 import { CurrentUserContext } from "../context/CurrentUserContext";
