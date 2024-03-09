@@ -84,4 +84,10 @@ class Api {
 
 }
 
-export const api = new Api ({baseUrl, headers});
+
+
+
+
+const api = new Api ({baseUrl, headers});
+
+export default api
