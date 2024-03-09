@@ -1,22 +1,15 @@
-import React, { useState, useEffect, useContext } from 'react';
-import  CurrentUserContext  from '../context/CurrentUserContext';
+import React, { useState, useEffect, useContext } from "react";
+import CurrentUserContext from "../contexts/CurrentUserContext";
 
 function EditProfilePopup(props) {
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
   const currentUser = useContext(CurrentUserContext);
-
 
   useEffect(() => {
     setName(currentUser.name);
     setDescription(currentUser.about);
   }, [currentUser]);
-
-    
-
-  
-
-
 
   function handleNameChange(e) {
     setName(e.target.value);
@@ -31,12 +24,9 @@ function EditProfilePopup(props) {
 
     props.onUpdateUser({
       name,
-      about: description,
+      about: description
     });
   }
-
- 
-
 
   return (
     <form onSubmit={handleSubmit} name="edit-profile">
