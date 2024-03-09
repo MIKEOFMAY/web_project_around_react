@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { CurrentUserContext } from '../context/CurrentUserContext';
+import  CurrentUserContext  from '../context/CurrentUserContext';
 
 function EditProfilePopup(props) {
   const [name, setName] = useState('');

@@ -9,7 +9,7 @@ import api from "../utils/api";
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
 
-import { CurrentUserContext } from "../context/CurrentUserContext";
+import  CurrentUserContext  from "../context/CurrentUserContext";
 
 function App() {
   const [isAvatarLoading, setIsAvatarLoading] = useState(false);
