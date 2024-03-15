@@ -29,6 +29,11 @@
     min-height: 19.3px;
     transition: all 0.3s ease-in-out;
     filter: drop-shadow(3px 5px 2px rgb(0 0 0 / 0.4));
+    visibility: hidden;
+  }
+
+  .postcard__remove-button_visible {
+    visibility: visible;
   }
   
   .postcard__remove-button:hover {

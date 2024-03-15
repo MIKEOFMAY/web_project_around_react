@@ -4,6 +4,17 @@ import CurrentUserContext from "../contexts/CurrentUserContext";
 
 function Card(props) {
   const currentUser = React.useContext(CurrentUserContext);
+  // Checking if the current user is the owner of the current card
+  const isOwn = props.card.owner._id === currentUser._id;
+
+
+
+  // Check if the card was liked by the current user
+  
+
+
+
+  
   const isLiked = props.card.likes.some((i) => i._id === currentUser._id);
   const { likesCounter } = props;
   console.log(props.card);
@@ -23,7 +34,11 @@ function Card(props) {
   return (
     <li className="postcard">
       <button
-        className="postcard__remove-button"
+        className={`postcard__remove-button ${
+          isOwn && "postcard__remove-button_visible"
+        }`} //addition of owner remove card
+
+
         aria-label="remove postcard"
         type="button"
         onClick={handleRemoveClick}

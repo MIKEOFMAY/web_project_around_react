@@ -6,13 +6,17 @@ import PopupWithForm from "./PopupWithForm";
 import ImagePopup from "./ImagePopup";
 import api from "../utils/api";
 
-import EditProfilePopup from "./EditProfilePopup";
+
 import EditAvatarPopup from "./EditAvatarPopup";
+
+
 
 import CurrentUserContext from "../contexts/CurrentUserContext";
 
 function App() {
   const [isAvatarLoading, setIsAvatarLoading] = useState(false);
+
+  
 
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
@@ -26,16 +30,7 @@ function App() {
     link: ""
   });
 
-  const onUpdateUser = async ({ name, about }) => {
-    try {
-      await api.setUserInfo(name, about);
-      // Update the local currentUser state
-      setCurrentUser({ ...currentUser, name, about });
-      closeAllPopups();
-    } catch (error) {
-      console.error("Error updating user info:", error);
-    }
-  };
+ 
 
   const [currentUser, setCurrentUser] = useState({});
 
@@ -44,7 +39,7 @@ function App() {
       .getUserInfo()
       .then((userInfo) => setCurrentUser(userInfo))
       .catch((error) => console.error("error fetching user info:", error));
-  }, []);
+  }, [isEditProfilePopupOpen]);    
 
   const handleEditProfileClick = () => {
     setIsEditProfilePopupOpen(true);
@@ -146,6 +141,8 @@ function App() {
     }
   };
 
+
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <Header />
@@ -156,10 +153,13 @@ function App() {
         onCardClick={handleCardClick}
         onRemoveCardClick={handleRemoveCardClick}
         refetchCard={refetchCard}
+
+
+        
       />
       <Footer />
 
-      <EditProfilePopup onUpdateUser={onUpdateUser} />
+      
 
       <PopupWithForm
         title="Edit Profile"
@@ -189,7 +189,7 @@ function App() {
             name="userjob"
             placeholder="About Me"
             id="input-about"
-            minLength="2"
+            minLength="2" 
             maxLength="200"
             required
           />
@@ -275,6 +275,15 @@ function App() {
         onUpdateAvatar={onUpdateAvatar}
         isRenderLoading={isAvatarLoading}
       />
+
+
+
+
+
+
+
+
+
     </CurrentUserContext.Provider>
   );
 }

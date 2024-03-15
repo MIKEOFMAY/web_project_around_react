@@ -5,7 +5,7 @@ function PopupWithForm (props) {
         <div 
             className={`popup popup_type_${props.name} ${
                 props.isOpen ? "popup_receptive" : ""
-            }`}
+            }`} 
         >
             <div className="popup__overlay">
                 <button
